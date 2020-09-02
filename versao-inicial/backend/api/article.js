@@ -1,5 +1,5 @@
 module.exports = app => {
-    const { existsOrError, notExistsOrError } = app.api.validation
+    const { existsOrError } = app.api.validation
 
     const save = (req, res) => {
         const article = { ...req.body }
@@ -25,7 +25,7 @@ module.exports = app => {
             app.db('articles')
                 .insert(article)
                 .then(_ => res.status(204).send())
-                .catch(err => res.status(500).send())
+                .catch(err => res.status(500).send(err))
         }
     }
 
@@ -33,11 +33,43 @@ module.exports = app => {
         try {
             const rowsDeleted = await app.db('articles')
                 .where({ id: req.params.id }).del()
-            notExistsOrError(rowsDeleted, 'Artigo não foi encotrado.')
+            
+            try {
+                existsOrError(rowsDeleted, 'Artigo não foi encotrado.')
+            } catch(msg) {
+                return res.status(400).send(msg)
+            }
 
             res.status(204).send()
         } catch(msg) {
             res.status(500).send(msg)
         }
     }
+
+    const limit = 10 // Limite de itens por página
+    const get = async (req, res) => {
+        const page = req.query.page || 1
+
+        const result = await app.db('articles').count('id').first()
+        const count = parseInt(result.count)
+
+        app.db('articles')
+            .select('id', 'name', 'description')
+            .limit(limit).offset(page * limit - limit) // offset é de onde começa a paginação
+            .then(articles => res.json({ data: articles, count, limit }))
+            .catch(err => res.status(500).send(err))
+    }
+
+    const getById = (req, res) => {
+        app.db('articles')
+            .where({ id: req.params.id })
+            .first()
+            .then(article => {
+                article.content = article.content.toString()
+                return res.json(article)
+            })
+            .catch(err => res.status(500).send(err))
+    }
+
+    return { save, remove, get, getById }
 }
