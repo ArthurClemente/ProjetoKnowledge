@@ -25,7 +25,7 @@ module.exports = app => {
             email: user.email,
             admin: user.admin,
             iat: now, // "iat = issued at" momento em que o token foi emitido!
-            exp: now + (60 * 60 * 24 * 3) // momento em que o token expira "60 = sec, * 60 = min * 24 = hr * 3 = dias"
+            exp: now + (60 * 60 * 24 * 7) // momento em que o token expira "60 = sec, * 60 = min * 24 = hr * 7 = dias"
         }
 
         res.json({
