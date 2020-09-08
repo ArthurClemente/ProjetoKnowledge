@@ -52,7 +52,7 @@ export default {
             fields: [
                 { key: 'id', label: 'Código', sortable: true },
                 { key: 'name', label: 'Nome', sortable: true },
-                { key: 'path', albel: 'Caminho', sortabel: true },
+                { key: 'path', label: 'Caminho', sortabel: true },
                 { key: 'actions', label: 'Ações' }
             ]
         }
