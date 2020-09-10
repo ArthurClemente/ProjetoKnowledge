@@ -48,7 +48,7 @@ module.exports = app => {
         }
     }
 
-    const limit = 3 // Limite de itens por página
+    const limit = 10 // Limite de itens por página
     const get = async (req, res) => {
         const page = req.query.page || 1
 
